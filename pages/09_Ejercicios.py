@@ -1,4 +1,8 @@
 import streamlit as st
+import random
+import pandas as pd
+import numpy as np
+from numpy.random import default_rng as rng
 
 
 st.subheader("Ejercicio 1: Simple Saludo")
@@ -50,3 +54,101 @@ if st.button("Me gusta!"):
     st.toast("Te gusta esta mascota.")
 
 st.divider()
+
+st.subheader("Ejercicio 5: Caja de Comentarios")
+
+with st.form("Comentarios"):
+    asuntocom = st.text_input("Asunto")
+    comment = st.text_area("Escribe tus comentarios aquí")
+    submit = st.form_submit_button("Enviar")
+if comment and submit:
+    st.json(
+        {"Asunto": {asuntocom},
+         "Comentario": {comment}
+        }
+    )
+
+st.divider()
+
+st.subheader("Ejercicio 6: Login Simulado")
+
+def Login():
+    if "usuario" not in st.session_state:
+        st.session_state["usuario"] = ""
+    if "contrasena" not in st.session_state:
+        st.session_state["contrasena"] = ""
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+    st.write(st.session_state.usuario)
+    st.write(st.session_state.contrasena)
+
+    
+
+with st.form("Login"):
+
+    username = st.text_input("Usuario", key="usuario")
+    password = st.text_input("Contraseña", type="password", key="contrasena")
+    ingresar = st.form_submit_button(label = "Ingresar", on_click=Login)
+if ingresar and username == "admin" and password == "1234":
+    st.success("¡Bienvenido, admin!")
+    st.write(st.session_state.usuario + " " + st.session_state.contrasena)
+    st.session_state.logged_in = True
+    logout = st.button(label = "Cerrar Sesión")
+    if logout:
+     del st.session_state.usuario, st.session_state.contrasena
+     st.session_state.logged_in = False
+    #st.write(st.session_state.usuario + " " + st.session_state.contrasena)
+elif ingresar and (username != "admin" or password != "1234"):
+        st.error("Usuario o contraseña incorrectos.")
+else: 
+    st.error("Campos vacios: Iniciar sesion.")
+
+st.divider()
+
+st.subheader("Ejercicio 7: Lista de Compras")
+
+def AgregarItem():
+    st.session_state.item.append(st.session_state.item_input)
+
+def SesionLista():
+ if 'item' not in st.session_state:
+    st.session_state.item = []
+
+SesionLista()
+
+with st.form("Lista de Compras"):
+    iteminput = st.text_input("Agregar Item", key = "item_input")
+    agregar = st.form_submit_button("Agregar a la lista", on_click=AgregarItem)
+    limpiar = st.form_submit_button("Limpiar lista")
+if limpiar:
+    st.session_state.item = []
+else:
+    st.error("Campos vacios: Agregar Items")
+
+st.write(st.session_state.item)
+
+st.divider()
+
+st.subheader("Ejercicio 8: Gráfico Interactivo")
+
+values = st.slider("Select a range of values", 10, 100)
+st.write("Values:", values)
+
+n = values 
+rng = np.random.default_rng()
+li = rng.integers(10, 100, size=n).tolist()
+
+print(li)
+
+st.line_chart(
+    li,
+    color=["#FF0000"]
+ )
+
+if st.button("Regenerar", key="regenerar"):
+  st.rerun()
+
+
+
+
+
